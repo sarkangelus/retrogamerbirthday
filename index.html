@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrogamer Birthday - Epic Games Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+            animation: titleGlow 2s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+            }
+            to {
+                text-shadow: 0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 80px #ff00ff;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 50px;
+            color: #00ffff;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .game-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 0, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.6), 0 0 50px rgba(0, 255, 255, 0.4);
+            border-color: #00ffff;
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .game-card:nth-child(2) .game-icon {
+            animation-delay: 0.5s;
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .game-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .play-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .play-button:hover {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+        }
+
+        .footer p {
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .feature {
+            background: rgba(255, 0, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid #ff00ff;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .game-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Particle background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: particleFloat 10s infinite linear;
+            opacity: 0.5;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <h1>🎮 RETROGAMER BIRTHDAY 🎮</h1>
+        <p class="subtitle">Epic Games Collection - Celebrate with Legendary Adventures!</p>
+
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-icon">🧛</div>
+                <h2 class="game-title">BUFFY THE VAMPIRE SLAYER</h2>
+                <div class="features">
+                    <span class="feature">🎯 10 Waves</span>
+                    <span class="feature">👾 Boss Battles</span>
+                    <span class="feature">⚡ Power-ups</span>
+                </div>
+                <p class="game-description">
+                    Diventa la Cacciatrice! Affronta ondate di vampiri, raccogli power-ups leggendari
+                    e sconfiggi il Maestro in questo epico action game. Sistema di punteggio dinamico,
+                    effetti particellari spettacolari e boss battles intense!
+                </p>
+                <a href="buffy-vampire-slayer-game.html" class="play-button">INIZIA LA CACCIA ⚔️</a>
+            </div>
+
+            <div class="game-card">
+                <div class="game-icon">😊</div>
+                <h2 class="game-title">RETROGAMER EXTREME</h2>
+                <div class="features">
+                    <span class="feature">🎂 Birthday Theme</span>
+                    <span class="feature">👾 Classic Arcade</span>
+                    <span class="feature">🌈 Neon Graphics</span>
+                </div>
+                <p class="game-description">
+                    Il classico gioco di compleanno con grafica estrema! Raccogli la torta evitando
+                    l'Uomo Falena in un'esplosione di colori neon, effetti particellari e animazioni
+                    spettacolari. Puro divertimento retro!
+                </p>
+                <a href="retrogamer-react-extreme-graphics.tsx" class="play-button" onclick="alert('Questo gioco richiede React. Usa il componente nel tuo progetto React!'); return false;">VEDI COMPONENTE 🎮</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>🎉 Happy Birthday Retrogamer! 🎉</strong></p>
+            <p>Una collezione di giochi epici creati per celebrare il tuo giorno speciale!</p>
+            <p>Controlla le stelle su GitHub ⭐ e condividi il divertimento!</p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (5 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
