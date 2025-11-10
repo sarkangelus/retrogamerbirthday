@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrogamer Birthday - Epic Games Collection</title>
+    <title>Buffy MMORPG - Sunnydale 3D</title>
     <style>
         * {
             margin: 0;
@@ -12,275 +12,1565 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-            animation: titleGlow 2s infinite alternate;
-        }
-
-        @keyframes titleGlow {
-            from {
-                text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-            }
-            to {
-                text-shadow: 0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 80px #ff00ff;
-            }
-        }
-
-        .subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 50px;
-            color: #00ffff;
-            text-shadow: 2px 2px 4px #000;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-
-        .game-card {
-            background: rgba(0, 0, 0, 0.6);
-            border: 3px solid #ff00ff;
-            border-radius: 15px;
-            padding: 30px;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
+            font-family: 'Arial', sans-serif;
             overflow: hidden;
+            background: #000;
+            color: #fff;
         }
 
-        .game-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 0, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.5s;
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
         }
 
-        .game-card:hover::before {
-            left: 100%;
-        }
-
-        .game-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.6), 0 0 50px rgba(0, 255, 255, 0.4);
-            border-color: #00ffff;
-        }
-
-        .game-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: float 3s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .game-card:nth-child(2) .game-icon {
-            animation-delay: 0.5s;
-        }
-
-        .game-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #ff00ff;
-            text-shadow: 0 0 10px #ff00ff;
-        }
-
-        .game-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            color: #ccc;
-        }
-
-        .play-button {
-            display: inline-block;
-            padding: 15px 40px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            color: #000;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-        }
-
-        .play-button:hover {
-            background: linear-gradient(45deg, #00ffff, #ff00ff);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
-            transform: scale(1.1);
-        }
-
-        .footer {
-            margin-top: 50px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            border: 2px solid #ff00ff;
-        }
-
-        .footer p {
-            margin: 10px 0;
-            font-size: 1rem;
-        }
-
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
-
-        .feature {
-            background: rgba(255, 0, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 2px solid #ff00ff;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .subtitle {
-                font-size: 1.2rem;
-            }
-
-            .game-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Particle background */
-        .particles {
+        #loading {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: linear-gradient(135deg, #1a0033 0%, #4d0000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .loading-bar {
+            width: 400px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
             overflow: hidden;
-            z-index: -1;
+            margin-bottom: 20px;
         }
 
-        .particle {
+        .loading-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6600, #ffff00);
+            width: 0%;
+            transition: width 0.3s;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        #hud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .hud-panel {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #fff;
-            border-radius: 50%;
-            animation: particleFloat 10s infinite linear;
-            opacity: 0.5;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(139, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
         }
 
-        @keyframes particleFloat {
+        #stats-panel {
+            top: 20px;
+            left: 20px;
+            min-width: 250px;
+        }
+
+        .stat-bar {
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            margin-bottom: 3px;
+            color: #ff6600;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .health-bar { background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000); }
+        .stamina-bar { background: linear-gradient(90deg, #00ffff, #0080ff); }
+        .xp-bar { background: linear-gradient(90deg, #ff00ff, #8000ff); }
+
+        #minimap {
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #8b0000;
+            position: relative;
+        }
+
+        #minimap-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        #quest-panel {
+            top: 240px;
+            right: 20px;
+            min-width: 250px;
+            max-width: 300px;
+        }
+
+        .quest-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(139, 0, 0, 0.3);
+            border-left: 3px solid #ff6600;
+            font-size: 12px;
+        }
+
+        .quest-title {
+            font-weight: bold;
+            color: #ffff00;
+            margin-bottom: 3px;
+        }
+
+        #inventory {
+            bottom: 20px;
+            right: 20px;
+            pointer-events: all;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            gap: 5px;
+        }
+
+        .inventory-slot {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #666;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 24px;
+        }
+
+        .inventory-slot:hover {
+            border-color: #ff6600;
+            background: rgba(139, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .inventory-slot.active {
+            border-color: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+
+        #controls-help {
+            bottom: 20px;
+            left: 20px;
+            font-size: 12px;
+            max-width: 300px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+            opacity: 0.8;
+        }
+
+        .control-key {
+            background: rgba(255, 102, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        #crosshair::before {
+            width: 2px;
+            height: 20px;
+            left: 9px;
+        }
+
+        #crosshair::after {
+            width: 20px;
+            height: 2px;
+            top: 9px;
+        }
+
+        #chat-panel {
+            bottom: 120px;
+            left: 20px;
+            width: 400px;
+            pointer-events: all;
+        }
+
+        #chat-messages {
+            height: 150px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .chat-message {
+            margin: 3px 0;
+            padding: 3px 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        .chat-player {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .chat-system {
+            color: #ffff00;
+            font-style: italic;
+        }
+
+        .chat-npc {
+            color: #ff6600;
+            font-weight: bold;
+        }
+
+        #chat-input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #666;
+            border-radius: 5px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: #ff6600;
+        }
+
+        #damage-numbers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .damage-number {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            animation: damageFloat 1s forwards;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        @keyframes damageFloat {
             0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.5;
-            }
-            90% {
-                opacity: 0.5;
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
             100% {
-                transform: translateY(-100vh) translateX(50px);
                 opacity: 0;
+                transform: translateY(-50px) scale(1.5);
             }
+        }
+
+        .damage-critical {
+            color: #ff0000;
+            font-size: 32px;
+        }
+
+        .damage-normal {
+            color: #ffff00;
+        }
+
+        .heal-number {
+            color: #00ff00;
+        }
+
+        #location-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            text-shadow: 0 0 20px #000, 0 0 40px #ff6600;
+        }
+
+        #location-indicator.show {
+            animation: locationShow 3s forwards;
+        }
+
+        @keyframes locationShow {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        .ability-cooldown {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-
-    <div class="container">
-        <h1>🎮 RETROGAMER BIRTHDAY 🎮</h1>
-        <p class="subtitle">Epic Games Collection - Celebrate with Legendary Adventures!</p>
-
-        <div class="games-grid">
-            <div class="game-card">
-                <div class="game-icon">🧛</div>
-                <h2 class="game-title">BUFFY THE VAMPIRE SLAYER</h2>
-                <div class="features">
-                    <span class="feature">🎯 10 Waves</span>
-                    <span class="feature">👾 Boss Battles</span>
-                    <span class="feature">⚡ Power-ups</span>
-                </div>
-                <p class="game-description">
-                    Diventa la Cacciatrice! Affronta ondate di vampiri, raccogli power-ups leggendari
-                    e sconfiggi il Maestro in questo epico action game. Sistema di punteggio dinamico,
-                    effetti particellari spettacolari e boss battles intense!
-                </p>
-                <a href="buffy-vampire-slayer-game.html" class="play-button">INIZIA LA CACCIA ⚔️</a>
-            </div>
-
-            <div class="game-card">
-                <div class="game-icon">😊</div>
-                <h2 class="game-title">RETROGAMER EXTREME</h2>
-                <div class="features">
-                    <span class="feature">🎂 Birthday Theme</span>
-                    <span class="feature">👾 Classic Arcade</span>
-                    <span class="feature">🌈 Neon Graphics</span>
-                </div>
-                <p class="game-description">
-                    Il classico gioco di compleanno con grafica estrema! Raccogli la torta evitando
-                    l'Uomo Falena in un'esplosione di colori neon, effetti particellari e animazioni
-                    spettacolari. Puro divertimento retro!
-                </p>
-                <a href="retrogamer-react-extreme-graphics.tsx" class="play-button" onclick="alert('Questo gioco richiede React. Usa il componente nel tuo progetto React!'); return false;">VEDI COMPONENTE 🎮</a>
-            </div>
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loading-title">🧛 BUFFY MMORPG 🧛</div>
+        <div class="loading-subtitle" style="font-size: 24px; margin-bottom: 30px;">SUNNYDALE AWAITS...</div>
+        <div class="loading-bar">
+            <div class="loading-fill" id="loadingFill"></div>
         </div>
-
-        <div class="footer">
-            <p><strong>🎉 Happy Birthday Retrogamer! 🎉</strong></p>
-            <p>Una collezione di giochi epici creati per celebrare il tuo giorno speciale!</p>
-            <p>Controlla le stelle su GitHub ⭐ e condividi il divertimento!</p>
-        </div>
+        <div id="loadingText">Initializing 3D World...</div>
     </div>
 
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+        <!-- Stats Panel -->
+        <div id="stats-panel" class="hud-panel">
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #ff6600;">
+                BUFFY SUMMERS - LVL <span id="player-level">1</span>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">Health: <span id="health-value">100/100</span></div>
+                <div class="bar-container">
+                    <div class="bar-fill health-bar" id="health-bar" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">Stamina: <span id="stamina-value">100/100</span></div>
+                <div class="bar-container">
+                    <div class="bar-fill stamina-bar" id="stamina-bar" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">XP: <span id="xp-value">0/100</span></div>
+                <div class="bar-container">
+                    <div class="bar-fill xp-bar" id="xp-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px;">
+                <div>Vampires Slayed: <span id="kills">0</span></div>
+                <div>Gold: <span id="gold">0</span> 💰</div>
+            </div>
+        </div>
+
+        <!-- Minimap -->
+        <div id="minimap" class="hud-panel">
+            <canvas id="minimap-canvas" width="196" height="196"></canvas>
+        </div>
+
+        <!-- Quest Panel -->
+        <div id="quest-panel" class="hud-panel">
+            <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #ff6600;">
+                ACTIVE QUESTS
+            </div>
+            <div id="quest-list">
+                <div class="quest-item">
+                    <div class="quest-title">Welcome to Sunnydale</div>
+                    <div>Explore the town and find the Bronze nightclub</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventory" class="hud-panel">
+            <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #ff6600;">INVENTORY</div>
+            <div class="inventory-grid" id="inventory-grid">
+                <div class="inventory-slot active" title="Wooden Stake">🗡️</div>
+                <div class="inventory-slot" title="Holy Water">💧</div>
+                <div class="inventory-slot" title="Cross">✝️</div>
+                <div class="inventory-slot"></div>
+                <div class="inventory-slot"></div>
+            </div>
+        </div>
+
+        <!-- Controls Help -->
+        <div id="controls-help" class="hud-panel">
+            <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #ff6600;">CONTROLS</div>
+            <div class="control-row">
+                <span><span class="control-key">WASD</span> Move</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">MOUSE</span> Look Around</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">SHIFT</span> Sprint</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">SPACE</span> Jump</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">CLICK</span> Attack</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">E</span> Interact</span>
+            </div>
+            <div class="control-row">
+                <span><span class="control-key">T</span> Chat</span>
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div id="chat-panel" class="hud-panel">
+            <div id="chat-messages">
+                <div class="chat-message">
+                    <span class="chat-system">Welcome to Sunnydale MMORPG!</span>
+                </div>
+                <div class="chat-message">
+                    <span class="chat-npc">Giles:</span> Buffy, vampires are gathering near the cemetery...
+                </div>
+            </div>
+            <input type="text" id="chat-input" placeholder="Press T to chat..." disabled>
+        </div>
+
+        <!-- Crosshair -->
+        <div id="crosshair"></div>
+
+        <!-- Location Indicator -->
+        <div id="location-indicator"></div>
+
+        <!-- Damage Numbers Container -->
+        <div id="damage-numbers"></div>
+    </div>
+
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <script>
-        // Create floating particles
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 10 + 's';
-            particle.style.animationDuration = (5 + Math.random() * 10) + 's';
-            particlesContainer.appendChild(particle);
+        // =====================================================
+        // BUFFY MMORPG - SUNNYDALE 3D
+        // Ultra-realistic 3D MMORPG using Three.js
+        // =====================================================
+
+        class BuffyMMORPG {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.player = null;
+                this.enemies = [];
+                this.npcs = [];
+                this.buildings = [];
+                this.trees = [];
+                this.lights = [];
+
+                // Player stats
+                this.playerStats = {
+                    level: 1,
+                    health: 100,
+                    maxHealth: 100,
+                    stamina: 100,
+                    maxStamina: 100,
+                    xp: 0,
+                    xpToLevel: 100,
+                    kills: 0,
+                    gold: 0,
+                    position: new THREE.Vector3(0, 1, 0),
+                    rotation: 0
+                };
+
+                // Controls
+                this.keys = {};
+                this.mouse = { x: 0, y: 0, locked: false };
+                this.velocity = new THREE.Vector3();
+                this.direction = new THREE.Vector3();
+
+                // Game state
+                this.clock = new THREE.Clock();
+                this.raycaster = new THREE.Raycaster();
+                this.chatActive = false;
+
+                // Constants
+                this.WORLD_SIZE = 500;
+                this.PLAYER_SPEED = 15;
+                this.SPRINT_MULTIPLIER = 2;
+                this.JUMP_FORCE = 12;
+                this.GRAVITY = -30;
+
+                this.init();
+            }
+
+            async init() {
+                this.updateLoading(10, 'Creating 3D Engine...');
+                await this.createScene();
+
+                this.updateLoading(20, 'Building Sunnydale...');
+                await this.createWorld();
+
+                this.updateLoading(40, 'Spawning Vampires...');
+                await this.createEnemies();
+
+                this.updateLoading(60, 'Adding NPCs...');
+                await this.createNPCs();
+
+                this.updateLoading(80, 'Setting up Controls...');
+                await this.setupControls();
+
+                this.updateLoading(90, 'Initializing Effects...');
+                await this.setupEffects();
+
+                this.updateLoading(100, 'Ready!');
+
+                setTimeout(() => {
+                    document.getElementById('loading').classList.add('hidden');
+                    this.startGame();
+                }, 500);
+            }
+
+            updateLoading(percent, text) {
+                document.getElementById('loadingFill').style.width = percent + '%';
+                document.getElementById('loadingText').textContent = text;
+            }
+
+            async createScene() {
+                // Scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x0a0a1a);
+                this.scene.fog = new THREE.Fog(0x0a0a1a, 50, 300);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(0, 5, 10);
+
+                // Renderer
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: true
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // Lights
+                const ambientLight = new THREE.AmbientLight(0x404060, 0.4);
+                this.scene.add(ambientLight);
+
+                // Moon light (main directional)
+                const moonLight = new THREE.DirectionalLight(0x8888ff, 0.8);
+                moonLight.position.set(50, 100, 50);
+                moonLight.castShadow = true;
+                moonLight.shadow.camera.left = -100;
+                moonLight.shadow.camera.right = 100;
+                moonLight.shadow.camera.top = 100;
+                moonLight.shadow.camera.bottom = -100;
+                moonLight.shadow.mapSize.width = 2048;
+                moonLight.shadow.mapSize.height = 2048;
+                this.scene.add(moonLight);
+
+                // Hemisphere light for better ambient
+                const hemiLight = new THREE.HemisphereLight(0x4040ff, 0x101010, 0.6);
+                this.scene.add(hemiLight);
+
+                window.addEventListener('resize', () => this.onWindowResize());
+            }
+
+            async createWorld() {
+                // Ground
+                const groundGeometry = new THREE.PlaneGeometry(this.WORLD_SIZE, this.WORLD_SIZE, 100, 100);
+
+                // Add some terrain variation
+                const vertices = groundGeometry.attributes.position.array;
+                for (let i = 0; i < vertices.length; i += 3) {
+                    vertices[i + 2] = Math.random() * 2 - 1; // Random height variation
+                }
+                groundGeometry.computeVertexNormals();
+
+                const groundMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x1a4d1a,
+                    roughness: 0.8,
+                    metalness: 0.2
+                });
+                const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                this.scene.add(ground);
+
+                // Create Sunnydale town
+                this.createTown();
+
+                // Create cemetery
+                this.createCemetery();
+
+                // Add trees
+                this.createForest();
+
+                // Create skybox with stars
+                this.createSkybox();
+            }
+
+            createTown() {
+                const buildingData = [
+                    // Main street buildings
+                    { x: -20, z: -30, w: 15, h: 20, d: 12, color: 0x8b4513, name: "The Bronze" },
+                    { x: 10, z: -30, w: 12, h: 15, d: 10, color: 0x654321, name: "Espresso Pump" },
+                    { x: -40, z: -50, w: 18, h: 25, d: 15, color: 0x696969, name: "Sunnydale High" },
+                    { x: 30, z: -40, w: 10, h: 12, d: 10, color: 0x8b7355, name: "Magic Shop" },
+                    { x: -10, z: -60, w: 14, h: 18, d: 12, color: 0x556b2f, name: "Library" },
+
+                    // Residential area
+                    { x: -60, z: 20, w: 10, h: 10, d: 10, color: 0x8b6914, name: "House" },
+                    { x: -40, z: 20, w: 12, h: 12, d: 10, color: 0x9b7714, name: "House" },
+                    { x: -60, z: 40, w: 11, h: 11, d: 11, color: 0x8b7214, name: "House" },
+                    { x: 50, z: 20, w: 10, h: 10, d: 10, color: 0x7b6914, name: "House" },
+                    { x: 70, z: 30, w: 12, h: 12, d: 10, color: 0x8b6934, name: "House" },
+                ];
+
+                buildingData.forEach(b => {
+                    const building = this.createBuilding(b.x, b.z, b.w, b.h, b.d, b.color, b.name);
+                    this.buildings.push(building);
+                });
+
+                // Street lamps
+                for (let i = -80; i < 80; i += 20) {
+                    this.createStreetLamp(i, -25);
+                    this.createStreetLamp(i, 10);
+                }
+            }
+
+            createBuilding(x, z, width, height, depth, color, name) {
+                const group = new THREE.Group();
+
+                // Main building
+                const geometry = new THREE.BoxGeometry(width, height, depth);
+                const material = new THREE.MeshStandardMaterial({
+                    color: color,
+                    roughness: 0.7,
+                    metalness: 0.3
+                });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(x, height / 2, z);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                mesh.userData = { type: 'building', name: name };
+                group.add(mesh);
+
+                // Roof
+                const roofGeometry = new THREE.ConeGeometry(width * 0.7, height * 0.3, 4);
+                const roofMaterial = new THREE.MeshStandardMaterial({ color: 0x2d1810 });
+                const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+                roof.position.set(x, height + height * 0.15, z);
+                roof.rotation.y = Math.PI / 4;
+                roof.castShadow = true;
+                group.add(roof);
+
+                // Windows
+                const windowGeometry = new THREE.BoxGeometry(2, 2, 0.5);
+                const windowMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xffff88,
+                    emissive: 0xffff00,
+                    emissiveIntensity: 0.3
+                });
+
+                for (let i = 0; i < 3; i++) {
+                    const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
+                    window1.position.set(x - width/3, height * 0.3 + i * 5, z + depth/2 + 0.1);
+                    group.add(window1);
+
+                    const window2 = new THREE.Mesh(windowGeometry, windowMaterial);
+                    window2.position.set(x + width/3, height * 0.3 + i * 5, z + depth/2 + 0.1);
+                    group.add(window2);
+                }
+
+                // Door
+                const doorGeometry = new THREE.BoxGeometry(3, 5, 0.3);
+                const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x4a2511 });
+                const door = new THREE.Mesh(doorGeometry, doorMaterial);
+                door.position.set(x, 2.5, z + depth/2 + 0.2);
+                group.add(door);
+
+                this.scene.add(group);
+                return { group, mesh, name, position: new THREE.Vector3(x, 0, z) };
+            }
+
+            createStreetLamp(x, z) {
+                const group = new THREE.Group();
+
+                // Pole
+                const poleGeometry = new THREE.CylinderGeometry(0.2, 0.3, 8, 8);
+                const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+                const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+                pole.position.set(x, 4, z);
+                pole.castShadow = true;
+                group.add(pole);
+
+                // Light
+                const lightGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+                const lightMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xffaa00,
+                    emissive: 0xffaa00,
+                    emissiveIntensity: 1
+                });
+                const lightMesh = new THREE.Mesh(lightGeometry, lightMaterial);
+                lightMesh.position.set(x, 8, z);
+                group.add(lightMesh);
+
+                // Point light
+                const pointLight = new THREE.PointLight(0xffaa00, 1, 30);
+                pointLight.position.set(x, 8, z);
+                pointLight.castShadow = true;
+                group.add(pointLight);
+
+                this.scene.add(group);
+            }
+
+            createCemetery() {
+                const cemeteryX = 80;
+                const cemeteryZ = -60;
+
+                // Cemetery fence
+                for (let i = -20; i < 20; i += 2) {
+                    this.createFencePost(cemeteryX + i, cemeteryZ - 20);
+                    this.createFencePost(cemeteryX + i, cemeteryZ + 20);
+                }
+
+                // Tombstones
+                for (let i = 0; i < 30; i++) {
+                    const x = cemeteryX + (Math.random() - 0.5) * 35;
+                    const z = cemeteryZ + (Math.random() - 0.5) * 35;
+                    this.createTombstone(x, z);
+                }
+
+                // Crypt (large tomb)
+                const cryptGeometry = new THREE.BoxGeometry(8, 6, 6);
+                const cryptMaterial = new THREE.MeshStandardMaterial({ color: 0x3d3d3d });
+                const crypt = new THREE.Mesh(cryptGeometry, cryptMaterial);
+                crypt.position.set(cemeteryX, 3, cemeteryZ);
+                crypt.castShadow = true;
+                crypt.receiveShadow = true;
+                crypt.userData = { type: 'crypt' };
+                this.scene.add(crypt);
+
+                // Crypt door
+                const doorGeometry = new THREE.BoxGeometry(2, 4, 0.3);
+                const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+                const door = new THREE.Mesh(doorGeometry, doorMaterial);
+                door.position.set(cemeteryX, 2, cemeteryZ + 3.1);
+                this.scene.add(door);
+            }
+
+            createFencePost(x, z) {
+                const geometry = new THREE.BoxGeometry(0.3, 3, 0.3);
+                const material = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+                const post = new THREE.Mesh(geometry, material);
+                post.position.set(x, 1.5, z);
+                post.castShadow = true;
+                this.scene.add(post);
+            }
+
+            createTombstone(x, z) {
+                const geometry = new THREE.BoxGeometry(1.5, 2, 0.3);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0x505050,
+                    roughness: 0.9
+                });
+                const tombstone = new THREE.Mesh(geometry, material);
+                tombstone.position.set(x, 1, z);
+                tombstone.rotation.y = Math.random() * 0.3 - 0.15;
+                tombstone.castShadow = true;
+                tombstone.receiveShadow = true;
+                this.scene.add(tombstone);
+            }
+
+            createForest() {
+                for (let i = 0; i < 100; i++) {
+                    const x = (Math.random() - 0.5) * this.WORLD_SIZE * 0.9;
+                    const z = (Math.random() - 0.5) * this.WORLD_SIZE * 0.9;
+
+                    // Don't place trees on buildings
+                    let tooClose = false;
+                    for (let building of this.buildings) {
+                        const dist = Math.sqrt(
+                            Math.pow(x - building.position.x, 2) +
+                            Math.pow(z - building.position.z, 2)
+                        );
+                        if (dist < 30) {
+                            tooClose = true;
+                            break;
+                        }
+                    }
+
+                    if (!tooClose) {
+                        this.createTree(x, z);
+                    }
+                }
+            }
+
+            createTree(x, z) {
+                const group = new THREE.Group();
+
+                // Trunk
+                const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.7, 6, 8);
+                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x4a2511 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.set(0, 3, 0);
+                trunk.castShadow = true;
+                group.add(trunk);
+
+                // Foliage
+                const foliageGeometry = new THREE.SphereGeometry(3, 8, 8);
+                const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x0d4d0d });
+                const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+                foliage.position.set(0, 7, 0);
+                foliage.castShadow = true;
+                group.add(foliage);
+
+                group.position.set(x, 0, z);
+                this.scene.add(group);
+                this.trees.push(group);
+            }
+
+            createSkybox() {
+                // Stars
+                const starsGeometry = new THREE.BufferGeometry();
+                const starVertices = [];
+
+                for (let i = 0; i < 3000; i++) {
+                    const x = (Math.random() - 0.5) * 2000;
+                    const y = Math.random() * 500 + 100;
+                    const z = (Math.random() - 0.5) * 2000;
+                    starVertices.push(x, y, z);
+                }
+
+                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+                const starsMaterial = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 2,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const stars = new THREE.Points(starsGeometry, starsMaterial);
+                this.scene.add(stars);
+
+                // Moon
+                const moonGeometry = new THREE.SphereGeometry(15, 32, 32);
+                const moonMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xffffcc,
+                    emissive: 0xffffaa,
+                    emissiveIntensity: 0.3
+                });
+                const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+                moon.position.set(100, 150, -100);
+                this.scene.add(moon);
+            }
+
+            async createPlayer() {
+                // Player model (Buffy)
+                const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 8, 16);
+                const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff6699 });
+                this.player = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                this.player.position.copy(this.playerStats.position);
+                this.player.castShadow = true;
+                this.player.userData = { type: 'player' };
+                this.scene.add(this.player);
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+                const headMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
+                const head = new THREE.Mesh(headGeometry, headMaterial);
+                head.position.set(0, 1.3, 0);
+                this.player.add(head);
+
+                // Weapon (stake)
+                const stakeGeometry = new THREE.CylinderGeometry(0.05, 0.1, 1, 8);
+                const stakeMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+                this.playerWeapon = new THREE.Mesh(stakeGeometry, stakeMaterial);
+                this.playerWeapon.position.set(0.5, 0.5, 0);
+                this.playerWeapon.rotation.z = Math.PI / 4;
+                this.player.add(this.playerWeapon);
+
+                // Player light (so we can see around us)
+                const playerLight = new THREE.PointLight(0xffffff, 0.5, 15);
+                playerLight.position.set(0, 1, 0);
+                this.player.add(playerLight);
+            }
+
+            async createEnemies() {
+                // Spawn vampires around the map
+                const spawnPoints = [
+                    { x: 80, z: -60 }, // Cemetery
+                    { x: 50, z: 50 },
+                    { x: -70, z: 40 },
+                    { x: -50, z: -80 },
+                    { x: 30, z: 80 },
+                ];
+
+                spawnPoints.forEach((point, index) => {
+                    setTimeout(() => {
+                        for (let i = 0; i < 3; i++) {
+                            const x = point.x + (Math.random() - 0.5) * 20;
+                            const z = point.z + (Math.random() - 0.5) * 20;
+                            this.createVampire(x, z);
+                        }
+                    }, index * 200);
+                });
+            }
+
+            createVampire(x, z) {
+                const group = new THREE.Group();
+
+                // Body
+                const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 8, 16);
+                const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.castShadow = true;
+                group.add(body);
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+                const headMaterial = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
+                const head = new THREE.Mesh(headGeometry, headMaterial);
+                head.position.set(0, 1.3, 0);
+                group.add(head);
+
+                // Eyes (glowing red)
+                const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const eyeMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xff0000,
+                    emissive: 0xff0000,
+                    emissiveIntensity: 1
+                });
+                const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+                leftEye.position.set(-0.15, 1.4, 0.35);
+                group.add(leftEye);
+
+                const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+                rightEye.position.set(0.15, 1.4, 0.35);
+                group.add(rightEye);
+
+                group.position.set(x, 1, z);
+                group.userData = {
+                    type: 'vampire',
+                    health: 50,
+                    maxHealth: 50,
+                    speed: 3,
+                    damage: 10,
+                    detectRange: 30,
+                    attackRange: 2,
+                    state: 'idle', // idle, chase, attack
+                    lastAttack: 0
+                };
+
+                this.scene.add(group);
+                this.enemies.push(group);
+            }
+
+            async createNPCs() {
+                // Giles at the Library
+                this.createNPC(-10, -60, 'Giles', 0x8b7355, [
+                    "Buffy, vampires are gathering near the cemetery.",
+                    "Be careful out there. The Hellmouth is active tonight.",
+                    "Remember your training, Buffy."
+                ]);
+
+                // Willow at Sunnydale High
+                this.createNPC(-40, -50, 'Willow', 0xff6699, [
+                    "Hey Buffy! Need any magic help?",
+                    "I've been studying some new spells!",
+                    "The Bronze is having a party tonight!"
+                ]);
+
+                // Xander near The Bronze
+                this.createNPC(-20, -25, 'Xander', 0x4169e1, [
+                    "Buffy! What's the sitch?",
+                    "I saw some sketchy vampires near the cemetery.",
+                    "Want to grab a coffee after slaying?"
+                ]);
+            }
+
+            createNPC(x, z, name, color, dialogues) {
+                const group = new THREE.Group();
+
+                // Body
+                const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 8, 16);
+                const bodyMaterial = new THREE.MeshStandardMaterial({ color: color });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.castShadow = true;
+                group.add(body);
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+                const headMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
+                const head = new THREE.Mesh(headGeometry, headMaterial);
+                head.position.set(0, 1.3, 0);
+                group.add(head);
+
+                group.position.set(x, 1, z);
+                group.userData = {
+                    type: 'npc',
+                    name: name,
+                    dialogues: dialogues,
+                    currentDialogue: 0
+                };
+
+                this.scene.add(group);
+                this.npcs.push(group);
+            }
+
+            setupControls() {
+                // Keyboard
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key.toLowerCase()] = true;
+
+                    if (e.key === 't' || e.key === 'T') {
+                        this.toggleChat();
+                    }
+
+                    if (e.key === 'e' || e.key === 'E') {
+                        this.interact();
+                    }
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key.toLowerCase()] = false;
+                });
+
+                // Mouse
+                document.addEventListener('click', () => {
+                    if (!this.mouse.locked && !this.chatActive) {
+                        this.canvas.requestPointerLock();
+                    } else if (this.mouse.locked) {
+                        this.attack();
+                    }
+                });
+
+                document.addEventListener('pointerlockchange', () => {
+                    this.mouse.locked = document.pointerLockElement === this.canvas;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (this.mouse.locked) {
+                        this.mouse.x -= e.movementX * 0.002;
+                        this.mouse.y -= e.movementY * 0.002;
+                        this.mouse.y = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.mouse.y));
+                    }
+                });
+
+                // Chat input
+                const chatInput = document.getElementById('chat-input');
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const message = chatInput.value.trim();
+                        if (message) {
+                            this.sendChatMessage(message);
+                            chatInput.value = '';
+                        }
+                        this.toggleChat();
+                    } else if (e.key === 'Escape') {
+                        this.toggleChat();
+                    }
+                });
+            }
+
+            toggleChat() {
+                this.chatActive = !this.chatActive;
+                const chatInput = document.getElementById('chat-input');
+
+                if (this.chatActive) {
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                    if (this.mouse.locked) {
+                        document.exitPointerLock();
+                    }
+                } else {
+                    chatInput.disabled = true;
+                    chatInput.blur();
+                }
+            }
+
+            sendChatMessage(message) {
+                this.addChatMessage('Buffy', message, 'player');
+
+                // Simple NPC responses
+                if (message.toLowerCase().includes('help')) {
+                    setTimeout(() => {
+                        this.addChatMessage('Giles', 'Head to the cemetery, Buffy!', 'npc');
+                    }, 1000);
+                }
+            }
+
+            addChatMessage(sender, message, type) {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+
+                const senderSpan = document.createElement('span');
+                senderSpan.className = `chat-${type}`;
+                senderSpan.textContent = sender + ': ';
+
+                messageDiv.appendChild(senderSpan);
+                messageDiv.appendChild(document.createTextNode(message));
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            interact() {
+                // Check for nearby NPCs
+                const playerPos = this.player.position;
+
+                for (let npc of this.npcs) {
+                    const dist = playerPos.distanceTo(npc.position);
+                    if (dist < 5) {
+                        const dialogue = npc.userData.dialogues[npc.userData.currentDialogue];
+                        this.addChatMessage(npc.userData.name, dialogue, 'npc');
+                        npc.userData.currentDialogue = (npc.userData.currentDialogue + 1) % npc.userData.dialogues.length;
+                        return;
+                    }
+                }
+            }
+
+            attack() {
+                if (!this.canAttack) return;
+
+                this.canAttack = false;
+                setTimeout(() => { this.canAttack = true; }, 500);
+
+                // Weapon swing animation
+                if (this.playerWeapon) {
+                    const originalRotation = this.playerWeapon.rotation.z;
+                    this.playerWeapon.rotation.z = Math.PI / 2;
+                    setTimeout(() => {
+                        this.playerWeapon.rotation.z = originalRotation;
+                    }, 200);
+                }
+
+                // Check for hits
+                this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+                for (let intersect of intersects) {
+                    let obj = intersect.object;
+                    while (obj.parent && !obj.userData.type) {
+                        obj = obj.parent;
+                    }
+
+                    if (obj.userData.type === 'vampire' && intersect.distance < 5) {
+                        this.damageEnemy(obj, 25);
+                        break;
+                    }
+                }
+
+                // Use stamina
+                this.playerStats.stamina = Math.max(0, this.playerStats.stamina - 10);
+                this.updateHUD();
+            }
+
+            damageEnemy(enemy, damage) {
+                const isCritical = Math.random() < 0.2;
+                const finalDamage = isCritical ? damage * 2 : damage;
+
+                enemy.userData.health -= finalDamage;
+
+                // Show damage number
+                this.showDamageNumber(enemy.position, finalDamage, isCritical);
+
+                if (enemy.userData.health <= 0) {
+                    // Vampire dies
+                    this.scene.remove(enemy);
+                    this.enemies = this.enemies.filter(e => e !== enemy);
+
+                    // Rewards
+                    this.playerStats.xp += 50;
+                    this.playerStats.gold += 10 + Math.floor(Math.random() * 10);
+                    this.playerStats.kills++;
+
+                    this.checkLevelUp();
+                    this.updateHUD();
+
+                    this.addChatMessage('System', 'Vampire slayed! +50 XP', 'system');
+
+                    // Respawn vampire after delay
+                    setTimeout(() => {
+                        const x = (Math.random() - 0.5) * 150;
+                        const z = (Math.random() - 0.5) * 150;
+                        this.createVampire(x, z);
+                    }, 10000);
+                }
+            }
+
+            showDamageNumber(position, damage, isCritical) {
+                const container = document.getElementById('damage-numbers');
+                const damageDiv = document.createElement('div');
+                damageDiv.className = 'damage-number ' + (isCritical ? 'damage-critical' : 'damage-normal');
+                damageDiv.textContent = isCritical ? 'CRITICAL! ' + damage : damage;
+
+                // Convert 3D position to screen coordinates
+                const vector = position.clone().project(this.camera);
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+
+                damageDiv.style.left = x + 'px';
+                damageDiv.style.top = y + 'px';
+                container.appendChild(damageDiv);
+
+                setTimeout(() => damageDiv.remove(), 1000);
+            }
+
+            checkLevelUp() {
+                if (this.playerStats.xp >= this.playerStats.xpToLevel) {
+                    this.playerStats.level++;
+                    this.playerStats.xp -= this.playerStats.xpToLevel;
+                    this.playerStats.xpToLevel = Math.floor(this.playerStats.xpToLevel * 1.5);
+                    this.playerStats.maxHealth += 20;
+                    this.playerStats.health = this.playerStats.maxHealth;
+                    this.playerStats.maxStamina += 10;
+                    this.playerStats.stamina = this.playerStats.maxStamina;
+
+                    this.addChatMessage('System', `LEVEL UP! You are now level ${this.playerStats.level}!`, 'system');
+                }
+            }
+
+            setupEffects() {
+                this.canAttack = true;
+
+                // Regenerate stamina
+                setInterval(() => {
+                    if (this.playerStats.stamina < this.playerStats.maxStamina) {
+                        this.playerStats.stamina = Math.min(
+                            this.playerStats.maxStamina,
+                            this.playerStats.stamina + 2
+                        );
+                        this.updateHUD();
+                    }
+                }, 100);
+            }
+
+            updateHUD() {
+                const stats = this.playerStats;
+
+                document.getElementById('player-level').textContent = stats.level;
+                document.getElementById('health-value').textContent = `${Math.floor(stats.health)}/${stats.maxHealth}`;
+                document.getElementById('health-bar').style.width = (stats.health / stats.maxHealth * 100) + '%';
+
+                document.getElementById('stamina-value').textContent = `${Math.floor(stats.stamina)}/${stats.maxStamina}`;
+                document.getElementById('stamina-bar').style.width = (stats.stamina / stats.maxStamina * 100) + '%';
+
+                document.getElementById('xp-value').textContent = `${Math.floor(stats.xp)}/${stats.xpToLevel}`;
+                document.getElementById('xp-bar').style.width = (stats.xp / stats.xpToLevel * 100) + '%';
+
+                document.getElementById('kills').textContent = stats.kills;
+                document.getElementById('gold').textContent = stats.gold;
+            }
+
+            updateMinimap() {
+                const canvas = document.getElementById('minimap-canvas');
+                const ctx = canvas.getContext('2d');
+                const scale = 196 / this.WORLD_SIZE;
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, 196, 196);
+
+                // Draw buildings
+                ctx.fillStyle = '#666';
+                this.buildings.forEach(b => {
+                    const x = (b.position.x + this.WORLD_SIZE / 2) * scale;
+                    const y = (b.position.z + this.WORLD_SIZE / 2) * scale;
+                    ctx.fillRect(x - 2, y - 2, 4, 4);
+                });
+
+                // Draw enemies
+                ctx.fillStyle = '#f00';
+                this.enemies.forEach(e => {
+                    const x = (e.position.x + this.WORLD_SIZE / 2) * scale;
+                    const y = (e.position.z + this.WORLD_SIZE / 2) * scale;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw NPCs
+                ctx.fillStyle = '#0f0';
+                this.npcs.forEach(n => {
+                    const x = (n.position.x + this.WORLD_SIZE / 2) * scale;
+                    const y = (n.position.z + this.WORLD_SIZE / 2) * scale;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw player
+                if (this.player) {
+                    const x = (this.player.position.x + this.WORLD_SIZE / 2) * scale;
+                    const y = (this.player.position.z + this.WORLD_SIZE / 2) * scale;
+                    ctx.fillStyle = '#0ff';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Direction indicator
+                    ctx.strokeStyle = '#0ff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(
+                        x + Math.sin(this.mouse.x) * 10,
+                        y + Math.cos(this.mouse.x) * 10
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            updateEnemies(delta) {
+                const playerPos = this.player.position;
+
+                this.enemies.forEach(enemy => {
+                    const enemyPos = enemy.position;
+                    const distToPlayer = playerPos.distanceTo(enemyPos);
+                    const data = enemy.userData;
+
+                    if (distToPlayer < data.detectRange) {
+                        // Chase player
+                        data.state = 'chase';
+
+                        if (distToPlayer > data.attackRange) {
+                            // Move towards player
+                            const direction = new THREE.Vector3()
+                                .subVectors(playerPos, enemyPos)
+                                .normalize();
+
+                            enemyPos.x += direction.x * data.speed * delta;
+                            enemyPos.z += direction.z * data.speed * delta;
+
+                            // Face player
+                            enemy.lookAt(playerPos.x, enemyPos.y, playerPos.z);
+                        } else {
+                            // Attack player
+                            data.state = 'attack';
+                            const now = Date.now();
+                            if (now - data.lastAttack > 1000) {
+                                data.lastAttack = now;
+                                this.playerStats.health -= data.damage;
+                                this.showDamageNumber(this.player.position, data.damage, false);
+                                this.updateHUD();
+
+                                if (this.playerStats.health <= 0) {
+                                    this.gameOver();
+                                }
+                            }
+                        }
+                    } else {
+                        // Idle - wander
+                        data.state = 'idle';
+                        if (Math.random() < 0.01) {
+                            const angle = Math.random() * Math.PI * 2;
+                            enemyPos.x += Math.cos(angle) * data.speed * delta;
+                            enemyPos.z += Math.sin(angle) * data.speed * delta;
+                        }
+                    }
+
+                    // Keep within bounds
+                    const maxDist = this.WORLD_SIZE / 2 - 10;
+                    enemyPos.x = Math.max(-maxDist, Math.min(maxDist, enemyPos.x));
+                    enemyPos.z = Math.max(-maxDist, Math.min(maxDist, enemyPos.z));
+                });
+            }
+
+            gameOver() {
+                this.addChatMessage('System', 'You have been defeated! Press R to respawn.', 'system');
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'r' || e.key === 'R') {
+                        this.respawnPlayer();
+                    }
+                }, { once: true });
+            }
+
+            respawnPlayer() {
+                this.playerStats.health = this.playerStats.maxHealth;
+                this.playerStats.stamina = this.playerStats.maxStamina;
+                this.player.position.set(0, 1, 0);
+                this.updateHUD();
+                this.addChatMessage('System', 'You have respawned!', 'system');
+            }
+
+            startGame() {
+                this.createPlayer();
+                this.addChatMessage('System', 'Welcome to Sunnydale! Use WASD to move, Mouse to look, Click to attack.', 'system');
+                this.updateHUD();
+                this.animate();
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const delta = this.clock.getDelta();
+
+                if (this.player && !this.chatActive) {
+                    this.updatePlayer(delta);
+                    this.updateEnemies(delta);
+                    this.updateCamera();
+                    this.updateMinimap();
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            updatePlayer(delta) {
+                // Movement
+                const speed = this.PLAYER_SPEED * (this.keys['shift'] ? this.SPRINT_MULTIPLIER : 1);
+
+                this.direction.set(0, 0, 0);
+
+                if (this.keys['w']) this.direction.z = -1;
+                if (this.keys['s']) this.direction.z = 1;
+                if (this.keys['a']) this.direction.x = -1;
+                if (this.keys['d']) this.direction.x = 1;
+
+                this.direction.normalize();
+
+                // Apply rotation to direction
+                const rotatedDirection = this.direction.clone();
+                rotatedDirection.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.mouse.x);
+
+                this.velocity.x = rotatedDirection.x * speed;
+                this.velocity.z = rotatedDirection.z * speed;
+
+                // Jumping
+                if (this.keys[' '] && this.player.position.y <= 1.1) {
+                    this.velocity.y = this.JUMP_FORCE;
+                }
+
+                // Gravity
+                this.velocity.y += this.GRAVITY * delta;
+
+                // Apply velocity
+                this.player.position.x += this.velocity.x * delta;
+                this.player.position.z += this.velocity.z * delta;
+                this.player.position.y += this.velocity.y * delta;
+
+                // Ground collision
+                if (this.player.position.y < 1) {
+                    this.player.position.y = 1;
+                    this.velocity.y = 0;
+                }
+
+                // World boundaries
+                const maxDist = this.WORLD_SIZE / 2 - 5;
+                this.player.position.x = Math.max(-maxDist, Math.min(maxDist, this.player.position.x));
+                this.player.position.z = Math.max(-maxDist, Math.min(maxDist, this.player.position.z));
+
+                // Use stamina when sprinting
+                if (this.keys['shift'] && this.direction.length() > 0) {
+                    this.playerStats.stamina = Math.max(0, this.playerStats.stamina - 20 * delta);
+                    if (this.playerStats.stamina <= 0) {
+                        this.keys['shift'] = false;
+                    }
+                    this.updateHUD();
+                }
+            }
+
+            updateCamera() {
+                // Third person camera
+                const distance = 8;
+                const height = 3;
+
+                const cameraOffset = new THREE.Vector3(
+                    Math.sin(this.mouse.x) * distance,
+                    height + Math.sin(this.mouse.y) * 3,
+                    Math.cos(this.mouse.x) * distance
+                );
+
+                this.camera.position.copy(this.player.position).add(cameraOffset);
+                this.camera.lookAt(this.player.position.x, this.player.position.y + 1, this.player.position.z);
+            }
+
+            onWindowResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
         }
+
+        // Initialize game
+        const game = new BuffyMMORPG();
     </script>
 </body>
 </html>
