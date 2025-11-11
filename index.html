@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buffy MMORPG - Sunnydale 3D</title>
+    <title>Buffy MMORPG - Sunnydale 3D Ultra Realistic</title>
     <style>
         * {
             margin: 0;
@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             background: #000;
             color: #fff;
+            cursor: none;
         }
 
         #gameCanvas {
@@ -30,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a0033 0%, #4d0000 100%);
+            background: radial-gradient(circle at center, #1a0033 0%, #000000 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -39,25 +40,41 @@
         }
 
         #loading.hidden {
-            display: none;
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; pointer-events: none; }
         }
 
         .loading-title {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px #ff0000;
-            animation: pulse 2s infinite;
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff0000, #ff6600, #ffff00, #ff0000);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .loading-text {
-            font-size: 20px;
+            font-size: 18px;
             color: #ff6600;
+            margin-top: 20px;
+            letter-spacing: 2px;
         }
 
         #hud {
@@ -68,80 +85,130 @@
             height: 100%;
             pointer-events: none;
             z-index: 1000;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         .hud-panel {
             position: absolute;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid rgba(139, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 15px;
-            backdrop-filter: blur(5px);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 0, 0, 0.9) 100%);
+            border: 2px solid rgba(255, 102, 0, 0.6);
+            border-radius: 12px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 102, 0, 0.1);
         }
 
         #stats-panel {
-            top: 20px;
-            left: 20px;
-            min-width: 220px;
+            top: 25px;
+            left: 25px;
+            min-width: 280px;
+        }
+
+        .player-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ff6600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.8);
         }
 
         .stat-bar {
-            margin: 5px 0;
+            margin: 10px 0;
         }
 
         .stat-label {
-            font-size: 11px;
-            margin-bottom: 2px;
-            color: #ff6600;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #ffcc99;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .bar-container {
             width: 100%;
-            height: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #fff;
-            border-radius: 8px;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 9px;
             overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+            position: relative;
         }
 
         .bar-fill {
             height: 100%;
-            transition: width 0.3s;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .health-bar { background: #ff0000; }
-        .stamina-bar { background: #00ffff; }
-        .xp-bar { background: #ff00ff; }
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        }
+
+        .health-bar {
+            background: linear-gradient(90deg, #ff0000 0%, #ff4444 50%, #ff0000 100%);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+        }
+
+        .stamina-bar {
+            background: linear-gradient(90deg, #00ffff 0%, #00ccff 50%, #00ffff 100%);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+        }
+
+        .xp-bar {
+            background: linear-gradient(90deg, #ff00ff 0%, #cc00ff 50%, #ff00ff 100%);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        }
 
         #minimap {
-            top: 20px;
-            right: 20px;
-            width: 150px;
-            height: 150px;
+            top: 25px;
+            right: 25px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
         }
 
         #minimap-canvas {
             width: 100%;
             height: 100%;
+            border-radius: 50%;
         }
 
         #controls {
-            bottom: 20px;
-            left: 20px;
+            bottom: 25px;
+            left: 25px;
             font-size: 11px;
         }
 
         .control-row {
-            margin: 2px 0;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .key {
-            background: rgba(255, 102, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: bold;
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.4), rgba(255, 102, 0, 0.2));
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 102, 0, 0.6);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            min-width: 50px;
+            text-align: center;
         }
 
         #crosshair {
@@ -149,61 +216,170 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
         }
 
-        #crosshair::before,
-        #crosshair::after {
-            content: '';
+        .crosshair-dot {
             position: absolute;
-            background: rgba(255, 255, 255, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 102, 0, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 1);
         }
 
-        #crosshair::before {
+        .crosshair-line {
+            position: absolute;
+            background: rgba(255, 102, 0, 0.7);
+            box-shadow: 0 0 8px rgba(255, 102, 0, 0.8);
+        }
+
+        .crosshair-line.top {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 2px;
-            height: 20px;
-            left: 9px;
+            height: 10px;
         }
 
-        #crosshair::after {
-            width: 20px;
+        .crosshair-line.bottom {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+        }
+
+        .crosshair-line.left {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
             height: 2px;
-            top: 9px;
+        }
+
+        .crosshair-line.right {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 2px;
         }
 
         #message {
             position: absolute;
-            bottom: 80px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 12px 25px;
-            border: 2px solid #ff6600;
-            border-radius: 8px;
-            font-size: 14px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 0, 0, 0.95));
+            padding: 16px 35px;
+            border: 2px solid rgba(255, 102, 0, 0.8);
+            border-radius: 10px;
+            font-size: 16px;
             display: none;
             pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            max-width: 600px;
+            text-align: center;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         .damage-num {
             position: absolute;
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 900;
             color: #ffff00;
-            text-shadow: 2px 2px 4px #000;
+            text-shadow:
+                0 0 10px rgba(255, 255, 0, 1),
+                2px 2px 6px rgba(0, 0, 0, 1),
+                -2px -2px 6px rgba(0, 0, 0, 1);
             pointer-events: none;
-            animation: floatUp 1s forwards;
+            animation: damageFloat 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            z-index: 10000;
         }
 
         .damage-num.crit {
             color: #ff0000;
-            font-size: 32px;
+            font-size: 48px;
+            text-shadow:
+                0 0 20px rgba(255, 0, 0, 1),
+                0 0 40px rgba(255, 0, 0, 0.8),
+                3px 3px 8px rgba(0, 0, 0, 1),
+                -3px -3px 8px rgba(0, 0, 0, 1);
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-40px); }
+        @keyframes damageFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.8);
+            }
+            20% {
+                transform: translateY(-10px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(1);
+            }
+        }
+
+        .stats-value {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6600, #ff0000);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 900;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.6);
+        }
+
+        #fps-counter {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f0;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .blood-splatter {
+            position: absolute;
+            pointer-events: none;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.8) 0%, transparent 70%);
+            animation: splatterFade 1s forwards;
+        }
+
+        @keyframes splatterFade {
+            to {
+                opacity: 0;
+                transform: scale(2);
+            }
         }
     </style>
 </head>
@@ -212,7 +388,7 @@
     <div id="loading">
         <div class="loading-title">🧛 BUFFY MMORPG 🧛</div>
         <div class="loading-text">SUNNYDALE AWAITS...</div>
-        <div class="loading-text" style="margin-top: 20px;" id="loadStatus">Loading Three.js...</div>
+        <div class="loading-text" id="loadStatus">Initializing Ultra-Realistic Engine...</div>
     </div>
 
     <!-- Game Canvas -->
@@ -220,49 +396,73 @@
 
     <!-- HUD -->
     <div id="hud" style="display: none;">
+        <!-- FPS Counter -->
+        <div id="fps-counter">FPS: <span id="fps">60</span></div>
+
+        <!-- Stats Panel -->
         <div id="stats-panel" class="hud-panel">
-            <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #ff6600;">
-                BUFFY - LVL <span id="level">1</span>
+            <div class="player-title">
+                BUFFY SUMMERS - <span class="level-badge">LVL <span id="level">1</span></span>
             </div>
             <div class="stat-bar">
-                <div class="stat-label">Health: <span id="hp">100/100</span></div>
+                <div class="stat-label">
+                    <span>HEALTH</span>
+                    <span class="stats-value" id="hp">100/100</span>
+                </div>
                 <div class="bar-container">
                     <div class="bar-fill health-bar" id="hpBar" style="width: 100%"></div>
                 </div>
             </div>
             <div class="stat-bar">
-                <div class="stat-label">Stamina: <span id="stam">100/100</span></div>
+                <div class="stat-label">
+                    <span>STAMINA</span>
+                    <span class="stats-value" id="stam">100/100</span>
+                </div>
                 <div class="bar-container">
                     <div class="bar-fill stamina-bar" id="stamBar" style="width: 100%"></div>
                 </div>
             </div>
             <div class="stat-bar">
-                <div class="stat-label">XP: <span id="xp">0/100</span></div>
+                <div class="stat-label">
+                    <span>EXPERIENCE</span>
+                    <span class="stats-value" id="xp">0/100</span>
+                </div>
                 <div class="bar-container">
                     <div class="bar-fill xp-bar" id="xpBar" style="width: 0%"></div>
                 </div>
             </div>
-            <div style="margin-top: 8px; font-size: 11px;">
-                <div>Kills: <span id="kills">0</span></div>
-                <div>Gold: <span id="gold">0</span> 💰</div>
+            <div style="margin-top: 15px; font-size: 13px; display: flex; justify-content: space-between;">
+                <div>💀 Kills: <span class="stats-value" id="kills">0</span></div>
+                <div>💰 Gold: <span class="stats-value" id="gold">0</span></div>
             </div>
         </div>
 
+        <!-- Minimap -->
         <div id="minimap" class="hud-panel">
-            <canvas id="minimap-canvas" width="150" height="150"></canvas>
+            <canvas id="minimap-canvas" width="200" height="200"></canvas>
         </div>
 
+        <!-- Controls -->
         <div id="controls" class="hud-panel">
-            <div style="font-weight: bold; margin-bottom: 3px; color: #ff6600;">CONTROLS</div>
-            <div class="control-row"><span class="key">WASD</span> Move</div>
-            <div class="control-row"><span class="key">MOUSE</span> Look</div>
-            <div class="control-row"><span class="key">SHIFT</span> Sprint</div>
-            <div class="control-row"><span class="key">SPACE</span> Jump</div>
-            <div class="control-row"><span class="key">CLICK</span> Attack</div>
-            <div class="control-row"><span class="key">E</span> Interact</div>
+            <div style="font-weight: 700; margin-bottom: 8px; color: #ff6600; text-transform: uppercase; letter-spacing: 1px;">CONTROLS</div>
+            <div class="control-row"><span class="key">WASD</span> <span>Movement</span></div>
+            <div class="control-row"><span class="key">MOUSE</span> <span>Look Around</span></div>
+            <div class="control-row"><span class="key">SHIFT</span> <span>Sprint</span></div>
+            <div class="control-row"><span class="key">SPACE</span> <span>Jump</span></div>
+            <div class="control-row"><span class="key">CLICK</span> <span>Attack</span></div>
+            <div class="control-row"><span class="key">E</span> <span>Interact</span></div>
         </div>
 
-        <div id="crosshair"></div>
+        <!-- Crosshair -->
+        <div id="crosshair">
+            <div class="crosshair-dot"></div>
+            <div class="crosshair-line top"></div>
+            <div class="crosshair-line bottom"></div>
+            <div class="crosshair-line left"></div>
+            <div class="crosshair-line right"></div>
+        </div>
+
+        <!-- Message -->
         <div id="message"></div>
     </div>
 
@@ -286,8 +486,8 @@
             });
         }
 
-        // Main Game Class
-        class Game {
+        // Ultra-Realistic Game Class
+        class BuffyMMORPG {
             constructor() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.scene = null;
@@ -297,6 +497,7 @@
                 this.enemies = [];
                 this.npcs = [];
                 this.buildings = [];
+                this.particles = [];
 
                 this.stats = {
                     level: 1,
@@ -314,15 +515,29 @@
                 this.mouse = { x: 0, y: 0, locked: false };
                 this.velocity = new THREE.Vector3();
                 this.canAttack = true;
+                this.isRunning = false;
 
-                this.WORLD = 200;
-                this.SPEED = 8;
-                this.SPRINT = 1.5;
-                this.JUMP = 8;
-                this.GRAV = -20;
+                // Constants - Optimized for fluidity
+                this.WORLD = 250;
+                this.SPEED = 12;
+                this.SPRINT = 1.8;
+                this.JUMP = 10;
+                this.GRAV = -25;
+                this.SMOOTH = 0.15; // Camera smoothing
 
+                // Animation
                 this.clock = new THREE.Clock();
                 this.raycaster = new THREE.Raycaster();
+                this.cameraTarget = new THREE.Vector3();
+                this.cameraPosition = new THREE.Vector3();
+
+                // FPS Counter
+                this.fps = 60;
+                this.frames = 0;
+                this.lastFpsUpdate = Date.now();
+
+                // Particle system
+                this.bloodParticles = [];
             }
 
             log(msg) {
@@ -332,29 +547,29 @@
 
             async init() {
                 try {
-                    this.log('Waiting for Three.js...');
+                    this.log('Loading Three.js Engine...');
                     await waitForThree();
 
-                    this.log('Creating scene...');
+                    this.log('Creating Ultra-Realistic Scene...');
                     this.createScene();
 
-                    this.log('Building world...');
+                    this.log('Building Sunnydale World...');
                     this.createWorld();
 
-                    this.log('Creating player...');
+                    this.log('Spawning Buffy Summers...');
                     this.createPlayer();
 
-                    this.log('Spawning enemies...');
+                    this.log('Summoning Vampires...');
                     this.createEnemies();
 
-                    this.log('Adding NPCs...');
+                    this.log('Adding Scooby Gang...');
                     this.createNPCs();
 
-                    this.log('Setting up controls...');
+                    this.log('Initializing Controls...');
                     this.setupControls();
 
-                    this.log('Starting game...');
-                    this.startGame();
+                    this.log('Starting Game...');
+                    setTimeout(() => this.startGame(), 500);
                 } catch (error) {
                     this.log('ERROR: ' + error.message);
                     console.error(error);
@@ -362,110 +577,154 @@
             }
 
             createScene() {
+                // Scene with better atmosphere
                 this.scene = new THREE.Scene();
-                this.scene.background = new THREE.Color(0x0a0a1a);
-                this.scene.fog = new THREE.Fog(0x0a0a1a, 30, 150);
+                this.scene.background = new THREE.Color(0x050515);
+                this.scene.fog = new THREE.FogExp2(0x050515, 0.008);
 
-                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500);
+                // Camera with better FOV
+                this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
                 this.camera.position.set(0, 5, 10);
 
-                this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
+                // Renderer with enhanced settings
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: true,
+                    powerPreference: "high-performance"
+                });
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.2;
 
-                const ambient = new THREE.AmbientLight(0x404060, 0.6);
+                // Ambient light - darker for night atmosphere
+                const ambient = new THREE.AmbientLight(0x303050, 0.4);
                 this.scene.add(ambient);
 
-                const moon = new THREE.DirectionalLight(0x8888ff, 0.8);
-                moon.position.set(50, 100, 50);
-                moon.castShadow = true;
-                moon.shadow.mapSize.width = 512;
-                moon.shadow.mapSize.height = 512;
-                moon.shadow.camera.left = -80;
-                moon.shadow.camera.right = 80;
-                moon.shadow.camera.top = 80;
-                moon.shadow.camera.bottom = -80;
-                this.scene.add(moon);
+                // Main moonlight
+                const moonLight = new THREE.DirectionalLight(0x8888cc, 1.2);
+                moonLight.position.set(60, 120, 60);
+                moonLight.castShadow = true;
+                moonLight.shadow.mapSize.width = 2048;
+                moonLight.shadow.mapSize.height = 2048;
+                moonLight.shadow.camera.left = -100;
+                moonLight.shadow.camera.right = 100;
+                moonLight.shadow.camera.top = 100;
+                moonLight.shadow.camera.bottom = -100;
+                moonLight.shadow.bias = -0.0001;
+                this.scene.add(moonLight);
 
-                window.addEventListener('resize', () => {
-                    this.camera.aspect = window.innerWidth / window.innerHeight;
-                    this.camera.updateProjectionMatrix();
-                    this.renderer.setSize(window.innerWidth, window.innerHeight);
-                });
+                // Hemisphere light for better ambient
+                const hemiLight = new THREE.HemisphereLight(0x4040aa, 0x101010, 0.5);
+                this.scene.add(hemiLight);
+
+                window.addEventListener('resize', () => this.onResize());
             }
 
             createWorld() {
-                // Ground
-                const ground = new THREE.Mesh(
-                    new THREE.PlaneGeometry(this.WORLD, this.WORLD),
-                    new THREE.MeshStandardMaterial({ color: 0x1a4d1a })
-                );
+                // Ground with texture-like appearance
+                const groundGeometry = new THREE.PlaneGeometry(this.WORLD, this.WORLD, 50, 50);
+                const vertices = groundGeometry.attributes.position.array;
+                for (let i = 0; i < vertices.length; i += 3) {
+                    vertices[i + 2] = Math.sin(vertices[i] * 0.1) * Math.cos(vertices[i + 1] * 0.1) * 0.5;
+                }
+                groundGeometry.computeVertexNormals();
+
+                const groundMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x1a4d1a,
+                    roughness: 0.9,
+                    metalness: 0.1
+                });
+                const ground = new THREE.Mesh(groundGeometry, groundMaterial);
                 ground.rotation.x = -Math.PI / 2;
                 ground.receiveShadow = true;
                 this.scene.add(ground);
 
-                // Buildings
-                this.addBuilding(-25, -30, 12, 15, 10, 0x8b4513, "The Bronze");
-                this.addBuilding(15, -30, 10, 12, 8, 0x654321, "Espresso");
-                this.addBuilding(-40, -50, 15, 20, 12, 0x696969, "High School");
-                this.addBuilding(30, -40, 8, 10, 8, 0x8b7355, "Magic Shop");
-                this.addBuilding(-10, -55, 10, 15, 10, 0x556b2f, "Library");
+                // Buildings with better materials
+                this.addBuilding(-30, -35, 15, 18, 12, 0x8b4513, "The Bronze");
+                this.addBuilding(20, -35, 12, 14, 10, 0x654321, "Espresso Pump");
+                this.addBuilding(-50, -60, 20, 25, 16, 0x696969, "Sunnydale High");
+                this.addBuilding(35, -45, 10, 13, 10, 0x8b7355, "Magic Shop");
+                this.addBuilding(-12, -65, 14, 17, 12, 0x556b2f, "Library");
 
                 // Houses
-                for (let i = 0; i < 8; i++) {
-                    const x = (Math.random() - 0.5) * 80;
-                    const z = (Math.random() - 0.5) * 80 + 20;
-                    this.addBuilding(x, z, 8, 8, 8, 0x8b6914, "House");
+                for (let i = 0; i < 10; i++) {
+                    const x = (Math.random() - 0.5) * 100;
+                    const z = (Math.random() - 0.5) * 100 + 25;
+                    if (Math.abs(x) > 20) {
+                        this.addBuilding(x, z, 9, 10, 9, 0x8b6914, "House");
+                    }
                 }
 
-                // Lamps
-                for (let i = -40; i < 40; i += 20) {
-                    this.addLamp(i, -25);
+                // Street lamps with glow
+                for (let i = -50; i < 50; i += 20) {
+                    this.addLamp(i, -28);
+                    this.addLamp(i, 15);
                 }
 
                 // Cemetery
-                for (let i = 0; i < 15; i++) {
-                    const x = 50 + (Math.random() - 0.5) * 20;
-                    const z = -50 + (Math.random() - 0.5) * 20;
+                for (let i = 0; i < 20; i++) {
+                    const x = 55 + (Math.random() - 0.5) * 25;
+                    const z = -55 + (Math.random() - 0.5) * 25;
                     this.addTomb(x, z);
                 }
 
                 // Trees
-                for (let i = 0; i < 30; i++) {
-                    const x = (Math.random() - 0.5) * this.WORLD * 0.7;
-                    const z = (Math.random() - 0.5) * this.WORLD * 0.7;
-                    if (Math.abs(x) > 25 || Math.abs(z) > 25) {
+                for (let i = 0; i < 40; i++) {
+                    const x = (Math.random() - 0.5) * this.WORLD * 0.75;
+                    const z = (Math.random() - 0.5) * this.WORLD * 0.75;
+                    if (Math.abs(x) > 28 || Math.abs(z) > 28) {
                         this.addTree(x, z);
                     }
                 }
 
-                // Stars
+                // Enhanced starfield
                 const starsGeo = new THREE.BufferGeometry();
                 const verts = [];
-                for (let i = 0; i < 1000; i++) {
+                const colors = [];
+                for (let i = 0; i < 3000; i++) {
                     verts.push(
-                        (Math.random() - 0.5) * 800,
-                        Math.random() * 200 + 100,
-                        (Math.random() - 0.5) * 800
+                        (Math.random() - 0.5) * 1000,
+                        Math.random() * 400 + 100,
+                        (Math.random() - 0.5) * 1000
                     );
+                    const brightness = 0.5 + Math.random() * 0.5;
+                    colors.push(brightness, brightness, brightness + 0.2);
                 }
                 starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-                const stars = new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1 }));
+                starsGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                const starsMat = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const stars = new THREE.Points(starsGeo, starsMat);
                 this.scene.add(stars);
 
                 // Moon
-                const moonMesh = new THREE.Mesh(
-                    new THREE.SphereGeometry(8, 32, 32),
-                    new THREE.MeshStandardMaterial({ color: 0xffffcc, emissive: 0xffffaa, emissiveIntensity: 0.5 })
-                );
-                moonMesh.position.set(70, 100, -70);
-                this.scene.add(moonMesh);
+                const moonGeo = new THREE.SphereGeometry(12, 32, 32);
+                const moonMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffee,
+                    emissive: 0xffffcc,
+                    emissiveIntensity: 0.8,
+                    roughness: 0.9
+                });
+                const moon = new THREE.Mesh(moonGeo, moonMat);
+                moon.position.set(80, 140, -80);
+                this.scene.add(moon);
             }
 
             addBuilding(x, z, w, h, d, color, name) {
                 const building = new THREE.Mesh(
                     new THREE.BoxGeometry(w, h, d),
-                    new THREE.MeshStandardMaterial({ color: color })
+                    new THREE.MeshStandardMaterial({
+                        color: color,
+                        roughness: 0.8,
+                        metalness: 0.2
+                    })
                 );
                 building.position.set(x, h/2, z);
                 building.castShadow = true;
@@ -473,85 +732,203 @@
                 this.scene.add(building);
                 this.buildings.push({ x, z });
 
+                // Roof
                 const roof = new THREE.Mesh(
-                    new THREE.ConeGeometry(w * 0.6, h * 0.25, 4),
-                    new THREE.MeshStandardMaterial({ color: 0x2d1810 })
+                    new THREE.ConeGeometry(w * 0.65, h * 0.3, 4),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x2d1810,
+                        roughness: 0.9
+                    })
                 );
-                roof.position.set(x, h + h * 0.12, z);
+                roof.position.set(x, h + h * 0.15, z);
                 roof.rotation.y = Math.PI / 4;
                 roof.castShadow = true;
                 this.scene.add(roof);
+
+                // Windows
+                for (let i = 0; i < 3; i++) {
+                    const window1 = new THREE.Mesh(
+                        new THREE.PlaneGeometry(1.5, 2),
+                        new THREE.MeshStandardMaterial({
+                            color: 0xffff88,
+                            emissive: 0xffff00,
+                            emissiveIntensity: 0.6
+                        })
+                    );
+                    window1.position.set(x - w/3, h/3 + i * 4, z + d/2 + 0.1);
+                    this.scene.add(window1);
+                }
             }
 
             addLamp(x, z) {
+                // Pole
                 const pole = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.15, 0.2, 5, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x333333 })
+                    new THREE.CylinderGeometry(0.15, 0.25, 6, 8),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x222222,
+                        roughness: 0.6,
+                        metalness: 0.8
+                    })
                 );
-                pole.position.set(x, 2.5, z);
+                pole.position.set(x, 3, z);
                 pole.castShadow = true;
                 this.scene.add(pole);
 
-                const light = new THREE.PointLight(0xffaa00, 0.6, 20);
-                light.position.set(x, 5, z);
+                // Light bulb
+                const bulb = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.5, 16, 16),
+                    new THREE.MeshStandardMaterial({
+                        color: 0xffcc66,
+                        emissive: 0xffaa00,
+                        emissiveIntensity: 2
+                    })
+                );
+                bulb.position.set(x, 6, z);
+                this.scene.add(bulb);
+
+                // Point light
+                const light = new THREE.PointLight(0xffaa66, 1.5, 30, 2);
+                light.position.set(x, 6, z);
+                light.castShadow = true;
+                light.shadow.bias = -0.001;
                 this.scene.add(light);
+
+                // Add glow sprite
+                const spriteMat = new THREE.SpriteMaterial({
+                    map: this.createGlowTexture(),
+                    color: 0xffaa66,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
+                const sprite = new THREE.Sprite(spriteMat);
+                sprite.scale.set(8, 8, 1);
+                sprite.position.set(x, 6, z);
+                this.scene.add(sprite);
+            }
+
+            createGlowTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+                gradient.addColorStop(0.2, 'rgba(255, 200, 100, 0.8)');
+                gradient.addColorStop(0.4, 'rgba(255, 150, 50, 0.4)');
+                gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 64, 64);
+                const texture = new THREE.Texture(canvas);
+                texture.needsUpdate = true;
+                return texture;
             }
 
             addTomb(x, z) {
                 const tomb = new THREE.Mesh(
-                    new THREE.BoxGeometry(1.2, 1.5, 0.25),
-                    new THREE.MeshStandardMaterial({ color: 0x505050 })
+                    new THREE.BoxGeometry(1.4, 1.8, 0.3),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x404040,
+                        roughness: 1
+                    })
                 );
-                tomb.position.set(x, 0.75, z);
+                tomb.position.set(x, 0.9, z);
                 tomb.castShadow = true;
+                tomb.receiveShadow = true;
+                tomb.rotation.y = Math.random() * 0.2 - 0.1;
                 this.scene.add(tomb);
             }
 
             addTree(x, z) {
                 const trunk = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.3, 0.5, 4, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x4a2511 })
+                    new THREE.CylinderGeometry(0.35, 0.55, 5, 8),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x3a1f0f,
+                        roughness: 1
+                    })
                 );
-                trunk.position.set(x, 2, z);
+                trunk.position.set(x, 2.5, z);
                 trunk.castShadow = true;
                 this.scene.add(trunk);
 
                 const leaves = new THREE.Mesh(
-                    new THREE.SphereGeometry(2, 8, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x0d4d0d })
+                    new THREE.SphereGeometry(2.5, 12, 12),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x0a3d0a,
+                        roughness: 0.9
+                    })
                 );
-                leaves.position.set(x, 5, z);
+                leaves.position.set(x, 6, z);
                 leaves.castShadow = true;
                 this.scene.add(leaves);
             }
 
             createPlayer() {
-                this.player = new THREE.Mesh(
-                    new THREE.CapsuleGeometry(0.4, 1.2, 8, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xff6699 })
-                );
-                this.player.position.set(0, 1, 0);
-                this.player.castShadow = true;
-                this.scene.add(this.player);
+                // More detailed Buffy model
+                this.player = new THREE.Group();
 
-                const head = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.35, 16, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xffcc99 })
+                // Body - capsule
+                const body = new THREE.Mesh(
+                    new THREE.CapsuleGeometry(0.45, 1.3, 12, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: 0xff6699,
+                        roughness: 0.7,
+                        metalness: 0.1
+                    })
                 );
-                head.position.y = 1.1;
+                body.castShadow = true;
+                this.player.add(body);
+
+                // Head - sphere
+                const head = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.38, 24, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: 0xffcc99,
+                        roughness: 0.6
+                    })
+                );
+                head.position.y = 1.2;
+                head.castShadow = true;
                 this.player.add(head);
 
-                this.weapon = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.04, 0.08, 0.8, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x8b4513 })
+                // Hair
+                const hair = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.42, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.6),
+                    new THREE.MeshStandardMaterial({
+                        color: 0xffdd99,
+                        roughness: 0.8
+                    })
                 );
-                this.weapon.position.set(0.4, 0.4, 0);
+                hair.position.y = 1.45;
+                hair.castShadow = true;
+                this.player.add(hair);
+
+                // Weapon - stake
+                this.weapon = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.05, 0.09, 1, 12),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x6b4423,
+                        roughness: 0.8
+                    })
+                );
+                this.weapon.position.set(0.45, 0.5, 0);
                 this.weapon.rotation.z = Math.PI / 4;
+                this.weapon.castShadow = true;
                 this.player.add(this.weapon);
+
+                // Player light
+                const playerLight = new THREE.PointLight(0xffffff, 0.4, 8);
+                playerLight.position.set(0, 1.5, 0);
+                this.player.add(playerLight);
+
+                this.player.position.set(0, 1, 0);
+                this.scene.add(this.player);
             }
 
             createEnemies() {
-                const spawns = [[50, -50], [40, 40], [-50, 35], [-40, -60], [25, 60]];
+                const spawns = [
+                    [55, -55], [50, 50], [-55, 45], [-50, -65], [30, 70],
+                    [60, -30], [-60, 30]
+                ];
                 spawns.forEach(([x, z]) => {
                     this.addVampire(x, z);
                 });
@@ -560,42 +937,58 @@
             addVampire(x, z) {
                 const vamp = new THREE.Group();
 
+                // Body
                 const body = new THREE.Mesh(
-                    new THREE.CapsuleGeometry(0.4, 1.2, 8, 16),
-                    new THREE.MeshStandardMaterial({ color: 0x1a1a1a })
+                    new THREE.CapsuleGeometry(0.42, 1.25, 12, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x1a1a1a,
+                        roughness: 0.8
+                    })
                 );
                 body.castShadow = true;
                 vamp.add(body);
 
+                // Head
                 const head = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.35, 16, 16),
-                    new THREE.MeshStandardMaterial({ color: 0x3a3a3a })
+                    new THREE.SphereGeometry(0.36, 24, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x2a2a2a,
+                        roughness: 0.7
+                    })
                 );
-                head.position.y = 1.1;
+                head.position.y = 1.15;
+                head.castShadow = true;
                 vamp.add(head);
 
+                // Glowing red eyes
                 const eyeMat = new THREE.MeshStandardMaterial({
                     color: 0xff0000,
                     emissive: 0xff0000,
-                    emissiveIntensity: 1
+                    emissiveIntensity: 3
                 });
 
-                const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), eyeMat);
-                leftEye.position.set(-0.12, 1.2, 0.3);
+                const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), eyeMat);
+                leftEye.position.set(-0.14, 1.25, 0.32);
                 vamp.add(leftEye);
 
-                const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), eyeMat);
-                rightEye.position.set(0.12, 1.2, 0.3);
+                const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), eyeMat);
+                rightEye.position.set(0.14, 1.25, 0.32);
                 vamp.add(rightEye);
+
+                // Eye glow
+                const eyeLight = new THREE.PointLight(0xff0000, 0.8, 3);
+                eyeLight.position.set(0, 1.25, 0.4);
+                vamp.add(eyeLight);
 
                 vamp.position.set(x, 1, z);
                 vamp.userData = {
                     type: 'vampire',
                     hp: 50,
                     maxHp: 50,
-                    speed: 2.5,
+                    speed: 3,
                     damage: 10,
-                    lastAttack: 0
+                    lastAttack: 0,
+                    bobOffset: Math.random() * Math.PI * 2
                 };
 
                 this.scene.add(vamp);
@@ -603,26 +996,33 @@
             }
 
             createNPCs() {
-                this.addNPC(-10, -55, 'Giles', 0x8b7355);
-                this.addNPC(-40, -50, 'Willow', 0xff6699);
-                this.addNPC(-25, -25, 'Xander', 0x4169e1);
+                this.addNPC(-12, -65, 'Giles', 0x8b7355);
+                this.addNPC(-50, -60, 'Willow', 0xff6699);
+                this.addNPC(-30, -30, 'Xander', 0x4169e1);
             }
 
             addNPC(x, z, name, color) {
                 const npc = new THREE.Group();
 
                 const body = new THREE.Mesh(
-                    new THREE.CapsuleGeometry(0.4, 1.2, 8, 16),
-                    new THREE.MeshStandardMaterial({ color: color })
+                    new THREE.CapsuleGeometry(0.42, 1.25, 12, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: color,
+                        roughness: 0.7
+                    })
                 );
                 body.castShadow = true;
                 npc.add(body);
 
                 const head = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.35, 16, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xffcc99 })
+                    new THREE.SphereGeometry(0.36, 24, 24),
+                    new THREE.MeshStandardMaterial({
+                        color: 0xffcc99,
+                        roughness: 0.6
+                    })
                 );
-                head.position.y = 1.1;
+                head.position.y = 1.15;
+                head.castShadow = true;
                 npc.add(head);
 
                 npc.position.set(x, 1, z);
@@ -656,9 +1056,9 @@
 
                 document.addEventListener('mousemove', (e) => {
                     if (this.mouse.locked) {
-                        this.mouse.x -= e.movementX * 0.002;
-                        this.mouse.y -= e.movementY * 0.002;
-                        this.mouse.y = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.mouse.y));
+                        this.mouse.x -= e.movementX * 0.0025;
+                        this.mouse.y -= e.movementY * 0.0025;
+                        this.mouse.y = Math.max(-Math.PI/2.5, Math.min(Math.PI/2.5, this.mouse.y));
                     }
                 });
             }
@@ -667,8 +1067,13 @@
                 if (!this.player) return;
                 for (let npc of this.npcs) {
                     const dist = this.player.position.distanceTo(npc.position);
-                    if (dist < 4) {
-                        this.showMsg(`${npc.userData.name}: Hello Buffy! Hunt some vampires!`);
+                    if (dist < 5) {
+                        const messages = {
+                            'Giles': 'The Hellmouth is active tonight. Be careful, Buffy!',
+                            'Willow': 'I can help with a protection spell if you need!',
+                            'Xander': 'Hey Buff! Need backup against the vamps?'
+                        };
+                        this.showMsg(messages[npc.userData.name] || `${npc.userData.name}: Hello Buffy!`);
                         return;
                     }
                 }
@@ -678,14 +1083,21 @@
                 if (!this.canAttack) return;
 
                 this.canAttack = false;
-                setTimeout(() => { this.canAttack = true; }, 400);
+                setTimeout(() => { this.canAttack = true; }, 350);
 
+                // Weapon swing animation
                 if (this.weapon) {
-                    const orig = this.weapon.rotation.z;
-                    this.weapon.rotation.z = Math.PI / 2;
-                    setTimeout(() => { this.weapon.rotation.z = orig; }, 150);
+                    const origZ = this.weapon.rotation.z;
+                    const origY = this.weapon.rotation.y;
+                    this.weapon.rotation.z = Math.PI / 1.5;
+                    this.weapon.rotation.y = Math.PI / 6;
+                    setTimeout(() => {
+                        this.weapon.rotation.z = origZ;
+                        this.weapon.rotation.y = origY;
+                    }, 150);
                 }
 
+                // Raycast attack
                 this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
                 const hits = this.raycaster.intersectObjects(this.scene.children, true);
 
@@ -693,27 +1105,30 @@
                     let obj = hit.object;
                     while (obj.parent && !obj.userData.type) obj = obj.parent;
 
-                    if (obj.userData.type === 'vampire' && hit.distance < 4) {
-                        const isCrit = Math.random() < 0.25;
+                    if (obj.userData.type === 'vampire' && hit.distance < 5) {
+                        const isCrit = Math.random() < 0.3;
                         const dmg = isCrit ? 50 : 25;
                         obj.userData.hp -= dmg;
 
                         this.showDmg(obj.position, dmg, isCrit);
+                        this.createBloodSplatter(hit.point);
 
                         if (obj.userData.hp <= 0) {
+                            this.createDeathEffect(obj.position);
                             this.scene.remove(obj);
                             this.enemies = this.enemies.filter(e => e !== obj);
                             this.stats.xp += 50;
-                            this.stats.gold += 12;
+                            this.stats.gold += 15;
                             this.stats.kills++;
                             this.checkLevel();
                             this.updateHUD();
 
+                            // Respawn
                             setTimeout(() => {
-                                const rx = (Math.random() - 0.5) * 80;
-                                const rz = (Math.random() - 0.5) * 80;
+                                const rx = (Math.random() - 0.5) * 100;
+                                const rz = (Math.random() - 0.5) * 100;
                                 this.addVampire(rx, rz);
-                            }, 7000);
+                            }, 8000);
                         }
                         break;
                     }
@@ -723,10 +1138,44 @@
                 this.updateHUD();
             }
 
+            createBloodSplatter(position) {
+                const div = document.createElement('div');
+                div.className = 'blood-splatter';
+                const vec = position.clone().project(this.camera);
+                const x = (vec.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (vec.y * -0.5 + 0.5) * window.innerHeight;
+                div.style.left = (x - 50) + 'px';
+                div.style.top = (y - 50) + 'px';
+                document.getElementById('hud').appendChild(div);
+                setTimeout(() => div.remove(), 1000);
+            }
+
+            createDeathEffect(position) {
+                // Particle explosion
+                for (let i = 0; i < 20; i++) {
+                    const particle = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.1, 8, 8),
+                        new THREE.MeshBasicMaterial({ color: 0x8b0000 })
+                    );
+                    particle.position.copy(position);
+                    const angle = (Math.PI * 2 * i) / 20;
+                    particle.userData = {
+                        velocity: new THREE.Vector3(
+                            Math.cos(angle) * (2 + Math.random() * 2),
+                            Math.random() * 3 + 1,
+                            Math.sin(angle) * (2 + Math.random() * 2)
+                        ),
+                        life: 1
+                    };
+                    this.scene.add(particle);
+                    this.bloodParticles.push(particle);
+                }
+            }
+
             showDmg(pos, dmg, crit) {
                 const div = document.createElement('div');
                 div.className = 'damage-num' + (crit ? ' crit' : '');
-                div.textContent = crit ? 'CRIT! ' + dmg : dmg;
+                div.textContent = crit ? '💥 CRIT! ' + dmg : dmg;
 
                 const vec = pos.clone().project(this.camera);
                 const x = (vec.x * 0.5 + 0.5) * window.innerWidth;
@@ -736,14 +1185,14 @@
                 div.style.top = y + 'px';
                 document.getElementById('hud').appendChild(div);
 
-                setTimeout(() => div.remove(), 1000);
+                setTimeout(() => div.remove(), 1200);
             }
 
             showMsg(text) {
                 const msg = document.getElementById('message');
                 msg.textContent = text;
                 msg.style.display = 'block';
-                setTimeout(() => { msg.style.display = 'none'; }, 2500);
+                setTimeout(() => { msg.style.display = 'none'; }, 3000);
             }
 
             checkLevel() {
@@ -753,7 +1202,9 @@
                     this.stats.xpNext = Math.floor(this.stats.xpNext * 1.5);
                     this.stats.maxHp += 20;
                     this.stats.hp = this.stats.maxHp;
-                    this.showMsg(`LEVEL UP! Now level ${this.stats.level}!`);
+                    this.stats.maxStam += 10;
+                    this.stats.stam = this.stats.maxStam;
+                    this.showMsg(`✨ LEVEL UP! You are now level ${this.stats.level}! ✨`);
                 }
             }
 
@@ -772,34 +1223,59 @@
             updateMinimap() {
                 const canvas = document.getElementById('minimap-canvas');
                 const ctx = canvas.getContext('2d');
-                const scale = 150 / this.WORLD;
+                const scale = 200 / this.WORLD;
 
+                // Background
                 ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, 150, 150);
+                ctx.fillRect(0, 0, 200, 200);
 
-                ctx.fillStyle = '#666';
+                // Buildings
+                ctx.fillStyle = '#555';
                 this.buildings.forEach(b => {
                     const x = (b.x + this.WORLD/2) * scale;
                     const y = (b.z + this.WORLD/2) * scale;
-                    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                    ctx.fillRect(x - 2, y - 2, 4, 4);
                 });
 
+                // Enemies
                 ctx.fillStyle = '#f00';
                 this.enemies.forEach(e => {
                     const x = (e.position.x + this.WORLD/2) * scale;
                     const y = (e.position.z + this.WORLD/2) * scale;
                     ctx.beginPath();
-                    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
                     ctx.fill();
+                    // Add glow
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = '#f00';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
                 });
 
+                // Player
                 if (this.player) {
                     const x = (this.player.position.x + this.WORLD/2) * scale;
                     const y = (this.player.position.z + this.WORLD/2) * scale;
                     ctx.fillStyle = '#0ff';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#0ff';
                     ctx.beginPath();
-                    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // Direction indicator
+                    ctx.strokeStyle = '#0ff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(
+                        x + Math.sin(this.mouse.x) * 12,
+                        y + Math.cos(this.mouse.x) * 12
+                    );
+                    ctx.stroke();
                 }
             }
 
@@ -809,22 +1285,28 @@
                 this.enemies.forEach(e => {
                     const dist = this.player.position.distanceTo(e.position);
 
-                    if (dist < 20 && dist > 1.5) {
+                    // Bob animation
+                    e.userData.bobOffset += dt * 2;
+                    e.position.y = 1 + Math.sin(e.userData.bobOffset) * 0.1;
+
+                    if (dist < 25 && dist > 1.8) {
+                        // Chase
                         const dir = new THREE.Vector3()
                             .subVectors(this.player.position, e.position)
                             .normalize();
                         e.position.x += dir.x * e.userData.speed * dt;
                         e.position.z += dir.z * e.userData.speed * dt;
                         e.lookAt(this.player.position);
-                    } else if (dist <= 1.5) {
+                    } else if (dist <= 1.8) {
+                        // Attack
                         const now = Date.now();
-                        if (now - e.userData.lastAttack > 1200) {
+                        if (now - e.userData.lastAttack > 1000) {
                             e.userData.lastAttack = now;
                             this.stats.hp -= e.userData.damage;
                             this.updateHUD();
 
                             if (this.stats.hp <= 0) {
-                                this.showMsg('DEFEATED! Respawning...');
+                                this.showMsg('💀 DEFEATED! Respawning...');
                                 this.stats.hp = this.stats.maxHp;
                                 this.player.position.set(0, 1, 0);
                             }
@@ -833,15 +1315,41 @@
                 });
             }
 
+            updateBloodParticles(dt) {
+                for (let i = this.bloodParticles.length - 1; i >= 0; i--) {
+                    const p = this.bloodParticles[i];
+                    p.userData.velocity.y -= 10 * dt;
+                    p.position.add(p.userData.velocity.clone().multiplyScalar(dt));
+                    p.userData.life -= dt;
+
+                    if (p.userData.life <= 0 || p.position.y < 0) {
+                        this.scene.remove(p);
+                        this.bloodParticles.splice(i, 1);
+                    }
+                }
+            }
+
+            updateFPS() {
+                this.frames++;
+                const now = Date.now();
+                if (now - this.lastFpsUpdate >= 1000) {
+                    this.fps = this.frames;
+                    document.getElementById('fps').textContent = this.fps;
+                    this.frames = 0;
+                    this.lastFpsUpdate = now;
+                }
+            }
+
             startGame() {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('hud').style.display = 'block';
-                this.showMsg('Welcome to Sunnydale! Click to start hunting vampires!');
+                this.showMsg('🧛 Welcome to Sunnydale! Click to lock mouse and begin your hunt! 🧛');
                 this.updateHUD();
 
+                // Stamina regen
                 setInterval(() => {
                     if (this.stats.stam < this.stats.maxStam) {
-                        this.stats.stam = Math.min(this.stats.maxStam, this.stats.stam + 1.5);
+                        this.stats.stam = Math.min(this.stats.maxStam, this.stats.stam + 2);
                         this.updateHUD();
                     }
                 }, 100);
@@ -852,20 +1360,24 @@
             animate() {
                 requestAnimationFrame(() => this.animate());
 
-                const dt = this.clock.getDelta();
+                const dt = Math.min(this.clock.getDelta(), 0.1);
 
                 if (this.player && this.mouse.locked) {
                     this.updatePlayer(dt);
                     this.updateEnemies(dt);
-                    this.updateCamera();
+                    this.updateCamera(dt);
                     this.updateMinimap();
                 }
+
+                this.updateBloodParticles(dt);
+                this.updateFPS();
 
                 this.renderer.render(this.scene, this.camera);
             }
 
             updatePlayer(dt) {
-                const speed = this.SPEED * (this.keys['shift'] ? this.SPRINT : 1);
+                this.isRunning = this.keys['shift'] && this.stats.stam > 0;
+                const speed = this.SPEED * (this.isRunning ? this.SPRINT : 1);
 
                 let mx = 0, mz = 0;
                 if (this.keys['w']) mz = -1;
@@ -877,54 +1389,84 @@
                     const angle = Math.atan2(mx, mz) + this.mouse.x;
                     this.velocity.x = Math.sin(angle) * speed;
                     this.velocity.z = Math.cos(angle) * speed;
+
+                    // Head bob while moving
+                    const bobSpeed = this.isRunning ? 12 : 8;
+                    const bobAmount = this.isRunning ? 0.15 : 0.08;
+                    this.player.position.y = 1 + Math.sin(Date.now() * 0.001 * bobSpeed) * bobAmount;
                 } else {
-                    this.velocity.x = 0;
-                    this.velocity.z = 0;
+                    this.velocity.x *= 0.9;
+                    this.velocity.z *= 0.9;
+                    this.player.position.y = 1;
                 }
 
-                if (this.keys[' '] && this.player.position.y <= 1.05) {
+                // Jump
+                if (this.keys[' '] && Math.abs(this.player.position.y - 1) < 0.15) {
                     this.velocity.y = this.JUMP;
                 }
 
+                // Gravity
                 this.velocity.y += this.GRAV * dt;
 
+                // Apply velocity
                 this.player.position.x += this.velocity.x * dt;
                 this.player.position.z += this.velocity.z * dt;
                 this.player.position.y += this.velocity.y * dt;
 
+                // Ground
                 if (this.player.position.y < 1) {
                     this.player.position.y = 1;
                     this.velocity.y = 0;
                 }
 
+                // Boundaries
                 const max = this.WORLD / 2 - 5;
                 this.player.position.x = Math.max(-max, Math.min(max, this.player.position.x));
                 this.player.position.z = Math.max(-max, Math.min(max, this.player.position.z));
 
-                if (this.keys['shift'] && (mx !== 0 || mz !== 0)) {
-                    this.stats.stam = Math.max(0, this.stats.stam - 12 * dt);
+                // Stamina drain while sprinting
+                if (this.isRunning && (mx !== 0 || mz !== 0)) {
+                    this.stats.stam = Math.max(0, this.stats.stam - 15 * dt);
                     if (this.stats.stam <= 0) this.keys['shift'] = false;
                 }
             }
 
-            updateCamera() {
-                const dist = 6;
-                const height = 2.5;
+            updateCamera(dt) {
+                const dist = 7;
+                const height = 3;
 
-                const offset = new THREE.Vector3(
-                    Math.sin(this.mouse.x) * dist,
-                    height + Math.sin(this.mouse.y) * 1.5,
-                    Math.cos(this.mouse.x) * dist
+                // Target camera position
+                const targetPos = new THREE.Vector3(
+                    this.player.position.x + Math.sin(this.mouse.x) * dist,
+                    this.player.position.y + height + Math.sin(this.mouse.y) * 2,
+                    this.player.position.z + Math.cos(this.mouse.x) * dist
                 );
 
-                this.camera.position.copy(this.player.position).add(offset);
-                this.camera.lookAt(this.player.position.x, this.player.position.y + 0.8, this.player.position.z);
+                // Target look-at position
+                const targetLook = new THREE.Vector3(
+                    this.player.position.x,
+                    this.player.position.y + 1,
+                    this.player.position.z
+                );
+
+                // Smooth camera movement (lerp)
+                this.cameraPosition.lerp(targetPos, this.SMOOTH);
+                this.cameraTarget.lerp(targetLook, this.SMOOTH);
+
+                this.camera.position.copy(this.cameraPosition);
+                this.camera.lookAt(this.cameraTarget);
+            }
+
+            onResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
             }
         }
 
         // Start the game
         window.addEventListener('load', () => {
-            const game = new Game();
+            const game = new BuffyMMORPG();
             game.init();
         });
     </script>
